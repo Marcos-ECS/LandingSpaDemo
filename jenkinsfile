@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Verificar archivos JS') {
+            steps {
+                script {
+                    // Verificar si existen archivos JS en el proyecto
+                    def jsFiles = sh(script: 'find . -name "*.js"', returnStdout: true).trim()
+
+                    if (jsFiles) {
+                        echo 'Se encontraron archivos JS en el proyecto. Iniciando deploy...'
+                        currentBuild.result = 'SUCCESS'  // Configurar el resultado de la compilación como éxito
+                    } else {
+                        error 'No se encontraron archivos JS en el proyecto. Deteniendo la ejecución.'
+                    }
+                }
+            }
+        }
+
+        stage('Despliegue') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+             
+                    echo 'Realizando el deploy...'
+                 
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Puedes agregar acciones de limpieza o notificación aquí
+        }
+    }
+}
