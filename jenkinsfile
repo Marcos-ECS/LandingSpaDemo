@@ -32,9 +32,5 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // Puedes agregar acciones de limpieza o notificación aquí
-        }
-    }
+   
 }
