@@ -26,7 +26,7 @@ pipeline {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                sh 'docker build -t darinpope/dp-alpine:latest .'
+                sh 'docker build -t marcosecs/dp-alpine:latest .'
             }
         }
         stage('Login') {
@@ -36,15 +36,15 @@ pipeline {
     }
     stage('Push') {
       steps {
-        sh 'docker push darinpope/dp-alpine:latest'
+        sh 'docker push marcosecs/dp-alpine:latest'
       }
     }
-     post {
-    always {
+    
+    }
+ post {
+        always {
       sh 'docker logout'
     }
   }
-    }
-
    
 }
