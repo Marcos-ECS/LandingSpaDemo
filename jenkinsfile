@@ -18,15 +18,16 @@ pipeline {
                     def jsFiles = sh(script: 'find . -name "*.js"', returnStdout: true).trim()
 
                     if (jsFiles) {
-                        echo 'Se encontraron archivos JS en el proyecto...y'
+                        echo 'Se encontraron archivos JS en el proyecto...'
                         currentBuild.result = 'SUCCESS'  // Configurar el resultado de la compilación como éxito
+
                     } else {
                         error 'No se encontraron archivos JS en el proyecto. Deteniendo la ejecución.'
                     }
                 }
-            }
+            } 
         }
-
+        /*
        stage('Build') {
       steps {
         sh './jenkins/build.sh'
@@ -41,13 +42,13 @@ pipeline {
       steps {
         sh './jenkins/push.sh'
       }
-    }
-    }
+    } */
+    } /*
     post {
     always {
       sh './jenkins/logout.sh'
     }
-  }
+  }*/
 
    
 }
