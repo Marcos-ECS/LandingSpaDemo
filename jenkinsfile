@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('marcosecs')
+  }
     stages {
         stage('Verificar archivos JS') {
             steps {
@@ -9,7 +16,7 @@ pipeline {
                     def jsFiles = sh(script: 'find . -name "*.js"', returnStdout: true).trim()
 
                     if (jsFiles) {
-                        echo 'Se encontraron archivos JS en el proyecto. Iniciando deploy...'
+                        echo 'Se encontraron archivos JS en el proyecto...y'
                         currentBuild.result = 'SUCCESS'  // Configurar el resultado de la compilación como éxito
                     } else {
                         error 'No se encontraron archivos JS en el proyecto. Deteniendo la ejecución.'
@@ -18,19 +25,27 @@ pipeline {
             }
         }
 
-        stage('Despliegue') {
-            when {
-                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-            }
-            steps {
-                script {
-             
-                    echo 'Realizando el deploy...'
-                 
-                }
-            }
-        }
+       stage('Build') {
+      steps {
+        sh './jenkins/build.sh'
+      }
     }
+    stage('Login') {
+      steps {
+        sh './jenkins/login.sh'
+      }
+    }
+    stage('Push') {
+      steps {
+        sh './jenkins/push.sh'
+      }
+    }
+    }
+    post {
+    always {
+      sh './jenkins/logout.sh'
+    }
+  }
 
    
 }
