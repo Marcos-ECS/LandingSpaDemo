@@ -2,7 +2,7 @@ pipeline {
     agent any
  
  environment {
-        DOCKER_IMAGE_NAME = "marcosecs/verificacionjs"
+        DOCKERHUB_CREDENTIALS = credentials('marcosecs')
     }
     stages {
         stage('Verificar archivos JS') {
@@ -26,17 +26,24 @@ pipeline {
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                script {
-             
-                    echo 'Realizando el deploy...'
-                      docker.build(DOCKER_IMAGE_NAME)
-                    docker.withRegistry('https://registry.hub.docker.com', 'dckr_pat_1m0WWo1rVrMreJYOle2_ViToRM4') {
-                        docker.image(DOCKER_IMAGE_NAME).push()
-                    }
-                    
-                }
+                sh 'docker build -t darinpope/dp-alpine:latest .'
             }
         }
+        stage('Login') {
+      steps {
+        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+      }
+    }
+    stage('Push') {
+      steps {
+        sh 'docker push darinpope/dp-alpine:latest'
+      }
+    }
+     post {
+    always {
+      sh 'docker logout'
+    }
+  }
     }
 
    
