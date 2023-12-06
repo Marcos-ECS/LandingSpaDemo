@@ -1,33 +1,36 @@
 pipeline {
-  agent any
-  options {
-    buildDiscarder(logRotator(numToKeepStr: '5'))
-  }
-  environment {
-    DOCKERHUB_CREDENTIALS = credentials('marcosecs')
-  }
-  stages {
-    stage('Clonar Repositorio') {
+    agent any
+
+    stages {
+        stage('Verificar archivos JS') {
             steps {
-                // Paso para clonar el repositorio de código fuente
-                git 'https://github.com/Marcos-ECS/LandingSpaDemo'
+                script {
+                    // Verificar si existen archivos JS en el proyecto
+                    def jsFiles = sh(script: 'find . -name "*.js"', returnStdout: true).trim()
+
+                    if (jsFiles) {
+                        echo 'Se encontraron archivos JS en el proyecto. Iniciando deploy...'
+                        currentBuild.result = 'SUCCESS'  // Configurar el resultado de la compilación como éxito
+                    } else {
+                        error 'No se encontraron archivos JS en el proyecto. Deteniendo la ejecución.'
+                    }
+                }
             }
         }
-    stage('Build') {
-      steps {
-        sh 'docker build -t marcosecs/dp-alpine:latest .'
-      }
+
+        stage('Despliegue') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
+            steps {
+                script {
+             
+                    echo 'Realizando el deploy...'
+                 
+                }
+            }
+        }
     }
-    stage('Login') {
-      steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-      }
-    }
-    stage('Push') {
-      steps {
-        sh 'docker push marcosecs/dp-alpine:latest'
-      }
-    }
-  }
-  
+
+   
 }
