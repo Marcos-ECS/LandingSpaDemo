@@ -7,6 +7,12 @@ pipeline {
     DOCKERHUB_CREDENTIALS = credentials('marcosecs')
   }
   stages {
+    stage('Clonar Repositorio') {
+            steps {
+                // Paso para clonar el repositorio de código fuente
+                git 'https://github.com/Marcos-ECS/LandingSpaDemo'
+            }
+        }
     stage('Build') {
       steps {
         sh 'docker build -t marcosecs/dp-alpine:latest .'
