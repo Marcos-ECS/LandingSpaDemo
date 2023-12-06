@@ -1,27 +1,12 @@
 pipeline {
-    agent any
- 
- environment {
-        DOCKERHUB_CREDENTIALS = credentials('marcosecs')
-    }
-    stages {
-        stage('Verificar archivos JS') {
-            steps {
-                script {
-                    // Verificar si existen archivos JS en el proyecto
-                    def jsFiles = sh(script: 'find . -name "*.js"', returnStdout: true).trim()
-
-                    if (jsFiles) {
-                        echo 'Se encontraron archivos JS en el proyecto. Iniciando deploy...'
-                        currentBuild.result = 'SUCCESS'  // Configurar el resultado de la compilación como éxito
-                    } else {
-                        error 'No se encontraron archivos JS en el proyecto. Deteniendo la ejecución.'
-                    }
-                }
-            }
-        }
-
-     stages {
+  agent { label 'linux' }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('marcosecs')
+  }
+  stages {
     stage('Build') {
       steps {
         sh 'docker build -t marcosecs/dp-alpine:latest .'
@@ -38,10 +23,9 @@ pipeline {
       }
     }
   }
-  
-        
-   
+  post {
+    always {
+      sh 'docker logout'
     }
- 
-   
+  }
 }
