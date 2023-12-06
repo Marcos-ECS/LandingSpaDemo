@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+ 
+ environment {
+        DOCKER_IMAGE_NAME = "marcosecs/verificacionjs"
+    }
     stages {
         stage('Verificar archivos JS') {
             steps {
@@ -26,7 +29,11 @@ pipeline {
                 script {
              
                     echo 'Realizando el deploy...'
-                 
+                      docker.build(DOCKER_IMAGE_NAME)
+                    docker.withRegistry('https://registry.hub.docker.com', 'dckr_pat_1m0WWo1rVrMreJYOle2_ViToRM4') {
+                        docker.image(DOCKER_IMAGE_NAME).push()
+                    }
+                    
                 }
             }
         }
