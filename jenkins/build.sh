@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t admin-m/dp-alpine:latest .
+docker build -t admin-m/dp-alpine:latest -f ../ Dockerfile
