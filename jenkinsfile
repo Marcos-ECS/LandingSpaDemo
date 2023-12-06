@@ -6,7 +6,7 @@ pipeline {
   }
 
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('marcosecs')
+    DOCKERHUB_CREDENTIALS = credentials('admin-m')
   }
     stages {
         stage('Verificar archivos JS') {
@@ -41,6 +41,11 @@ pipeline {
       }
     }
     }
+    post {
+    always {
+      sh './jenkins/logout.sh'
+    }
+  }
 
    
 }
