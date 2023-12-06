@@ -28,23 +28,25 @@ pipeline {
             steps {
                 sh 'docker build -t marcosecs/dp-alpine:latest .'
             }
+                    stage('Login') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
         }
-        stage('Login') {
-      steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-      }
-    }
-    stage('Push') {
+         stage('Push') {
       steps {
         sh 'docker push marcosecs/dp-alpine:latest'
       }
     }
-    
-    }
- post {
+    post {
         always {
       sh 'docker logout'
     }
   }
+ }
+        
+   
+    }
+ 
    
 }
