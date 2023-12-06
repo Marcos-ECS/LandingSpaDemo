@@ -1,2 +1,2 @@
 #!/bin/bash
-docker push marcosecs/dp-alpine:latest
+docker push admin-m/dp-alpine:latest
